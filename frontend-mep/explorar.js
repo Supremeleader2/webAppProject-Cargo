@@ -6,8 +6,8 @@
 (function () {
   'use strict';
 
-  const API_URL = 'http://localhost:5000/api';
-  const SERVER_URL = 'http://localhost:5000';
+  const API_URL = CONFIG.API_URL;
+  const SERVER_URL = CONFIG.SERVER_URL;
   const DEFAULT_IMG = 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80';
 
   function resolveImageUrl(img) {

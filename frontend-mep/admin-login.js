@@ -2,21 +2,21 @@
 (function () {
   'use strict';
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = CONFIG.API_URL;
 
-  const DEMO_EMAIL    = 'admin@miescuela.org';
+  const DEMO_EMAIL = 'admin@miescuela.org';
   const DEMO_PASSWORD = 'admin123';
 
-  const form          = document.getElementById('loginForm');
-  const emailInput    = document.getElementById('loginEmail');
+  const form = document.getElementById('loginForm');
+  const emailInput = document.getElementById('loginEmail');
   const passwordInput = document.getElementById('loginPassword');
-  const loginBtn      = document.getElementById('loginBtn');
-  const loginBtnText  = document.getElementById('loginBtnText');
-  const loginSpinner  = document.getElementById('loginSpinner');
-  const loginError    = document.getElementById('loginError');
-  const loginErrorText= document.getElementById('loginErrorText');
-  const togglePwdBtn  = document.getElementById('togglePassword');
-  const eyeIcon       = document.getElementById('eyeIcon');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginBtnText = document.getElementById('loginBtnText');
+  const loginSpinner = document.getElementById('loginSpinner');
+  const loginError = document.getElementById('loginError');
+  const loginErrorText = document.getElementById('loginErrorText');
+  const togglePwdBtn = document.getElementById('togglePassword');
+  const eyeIcon = document.getElementById('eyeIcon');
 
   /* Redirigir si ya hay token (nueva sesión) */
   if (sessionStorage.getItem('mep_admin_token')) {
@@ -40,7 +40,7 @@
     e.preventDefault();
     loginError.classList.add('hidden');
 
-    const email    = emailInput.value.trim();
+    const email = emailInput.value.trim();
     const password = passwordInput.value;
 
     loginBtnText.textContent = 'Iniciando sesión...';

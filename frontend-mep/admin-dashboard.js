@@ -5,8 +5,9 @@
 (function () {
   'use strict';
 
-  const API_URL = 'http://localhost:5000/api';
-  const SERVER_URL = 'http://localhost:5000';
+  const API_URL = CONFIG.API_URL;
+  const SERVER_URL = CONFIG.SERVER_URL;
+
 
   function resolveImageUrl(img) {
     if (!img) return '';
@@ -311,7 +312,7 @@
   }
 
   // Image file preview
-  document.getElementById('sf-image-file').addEventListener('change', function(e) {
+  document.getElementById('sf-image-file').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (file) {
       const url = URL.createObjectURL(file);
@@ -348,7 +349,7 @@
       const method = editingId ? 'PUT' : 'POST';
       const res = await fetchWithAuth(url, { method, body: JSON.stringify(data) });
       if (!res.ok) throw new Error(await res.text());
-      
+
       const resData = await res.json();
       const schoolIdResult = editingId || resData.id;
 
@@ -358,7 +359,7 @@
         const file = imageFileInput.files[0];
         const formData = new FormData();
         formData.append('image', file);
-        
+
         const uploadRes = await fetch(`${API_URL}/schools/${schoolIdResult}/image`, {
           method: 'POST',
           headers: {
@@ -366,7 +367,7 @@
           },
           body: formData
         });
-        
+
         if (!uploadRes.ok) throw new Error('Escuela guardada pero falló al subir la imagen');
       }
 

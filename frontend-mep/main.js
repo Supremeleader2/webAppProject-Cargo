@@ -1,14 +1,10 @@
-/* ============================================================
-   MI ESCUELA PRIMERO — main.js
-   Navigation toggle + scroll-based entrance animations
-   ============================================================ */
 
 (function () {
   'use strict';
 
   /* ── Mobile nav toggle ──────────────────────────────────── */
   const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const mobileMenu   = document.getElementById('mobileMenu');
+  const mobileMenu = document.getElementById('mobileMenu');
 
   if (hamburgerBtn && mobileMenu) {
     hamburgerBtn.addEventListener('click', () => {
@@ -80,7 +76,7 @@
     updateNavShadow();
   }
 
-    /* ── Botón flotante: latido periódico cada 5 segundos ── */
+  /* ── Botón flotante: latido periódico cada 5 segundos ── */
   const floatBtn = document.querySelector('.floating-donate-btn');
   if (floatBtn) {
     // Latido inicial al cargar (ya lo hace el CSS, pero aseguramos)

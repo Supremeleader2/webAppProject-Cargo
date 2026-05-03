@@ -12,10 +12,19 @@ const catalogRoutes = require('./routes/catalogRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Updated CORS
+const allowedOrigins = [
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
+  origin: allowedOrigins,
   credentials: true,
 }));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -6,36 +6,37 @@
 (function () {
   'use strict';
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = CONFIG.API_URL;
+
 
   /* ── DOM REFS ───────────────────────────────────────────── */
-  const form             = document.getElementById('donorForm');
-  const formState        = document.getElementById('formState');
-  const successState     = document.getElementById('successState');
-  const successName      = document.getElementById('successName');
-  const submitBtn        = document.getElementById('submitBtn');
-  const folioSpan        = document.getElementById('folioNumero'); // Asegúrate de tener este elemento en el HTML
+  const form = document.getElementById('donorForm');
+  const formState = document.getElementById('formState');
+  const successState = document.getElementById('successState');
+  const successName = document.getElementById('successName');
+  const submitBtn = document.getElementById('submitBtn');
+  const folioSpan = document.getElementById('folioNumero'); // Asegúrate de tener este elemento en el HTML
 
   const fields = {
-    nombreContacto:   document.getElementById('nombreContacto'),
-    nombreInstitucion:document.getElementById('nombreInstitucion'),
-    municipio:        document.getElementById('municipio'),
-    tipoInstitucion:  document.getElementById('tipoInstitucion'),
-    formaParticipacion:document.getElementById('formaParticipacion'),
-    telefono:         document.getElementById('telefono'),
-    correo:           document.getElementById('correo'),
+    nombreContacto: document.getElementById('nombreContacto'),
+    nombreInstitucion: document.getElementById('nombreInstitucion'),
+    municipio: document.getElementById('municipio'),
+    tipoInstitucion: document.getElementById('tipoInstitucion'),
+    formaParticipacion: document.getElementById('formaParticipacion'),
+    telefono: document.getElementById('telefono'),
+    correo: document.getElementById('correo'),
     notasAdicionales: document.getElementById('notasAdicionales'),
   };
 
-  const required = ['nombreContacto','nombreInstitucion','municipio',
-                    'tipoInstitucion','formaParticipacion','telefono','correo'];
+  const required = ['nombreContacto', 'nombreInstitucion', 'municipio',
+    'tipoInstitucion', 'formaParticipacion', 'telefono', 'correo'];
 
   /* ── PRE-FILL FROM URL PARAMS (sin cambios) ─────────────── */
   function prefillFromParams() {
     const params = new URLSearchParams(window.location.search);
-    const school   = params.get('school');
+    const school = params.get('school');
     const category = params.get('category');
-    const origen   = params.get('origen'); // opcional, para analytics
+    const origen = params.get('origen'); // opcional, para analytics
 
     if (!school && !category) return;
 
@@ -65,7 +66,7 @@
 
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
+    return str.replace(/[&<>]/g, function (m) {
       if (m === '&') return '&amp;';
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
