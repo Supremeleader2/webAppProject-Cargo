@@ -6,7 +6,9 @@ const pool = require('../config/db');
 
 const getMunicipalities = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT id_municipio, nombre_municipio FROM municipio ORDER BY nombre_municipio');
+    const [rows] = await pool.query(
+      'SELECT id_municipio, nombre_municipio FROM municipio ORDER BY nombre_municipio',
+    );
     res.json(rows);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener municipios' });
@@ -36,14 +38,18 @@ const getDashboardStats = async (req, res) => {
     const [totalSchools] = await pool.query('SELECT COUNT(*) as total FROM escuela');
     const [totalNeeds] = await pool.query('SELECT COUNT(*) as total FROM escuela_necesidad');
     const [totalRequests] = await pool.query('SELECT COUNT(*) as total FROM solicitud_apoyo');
-    const [avgProgress] = await pool.query('SELECT AVG(progreso_financiamiento) as promedio FROM escuela');
+    const [avgProgress] = await pool.query(
+      'SELECT AVG(progreso_financiamiento) as promedio FROM escuela',
+    );
     const [conditions] = await pool.query(`
       SELECT nivel_condicion, COUNT(*) as count
       FROM escuela
       GROUP BY nivel_condicion
     `);
     const distribution = {};
-    conditions.forEach(c => { distribution[c.nivel_condicion] = c.count; });
+    conditions.forEach((c) => {
+      distribution[c.nivel_condicion] = c.count;
+    });
 
     res.json({
       totalEscuelas: totalSchools[0].total,
@@ -62,7 +68,7 @@ const getGlobalProgress = async (req, res) => {
     // Meta: todas las escuelas en nivel 'Básico' o superior
     const [total] = await pool.query('SELECT COUNT(*) as total FROM escuela');
     const [basicoSuperior] = await pool.query(
-      `SELECT COUNT(*) as count FROM escuela WHERE nivel_condicion IN ('Básico', 'Medio', 'Alto', 'Ideal')`
+      `SELECT COUNT(*) as count FROM escuela WHERE nivel_condicion IN ('Básico', 'Medio', 'Alto', 'Ideal')`,
     );
     const current = basicoSuperior[0].count;
     const goal = total[0].total;
@@ -120,17 +126,25 @@ const importExcel = async (req, res) => {
       try {
         // 1. Municipio
         let idMunicipio;
-        const [mRow] = await pool.query('SELECT id_municipio FROM municipio WHERE nombre_municipio = ?', [municipioNombre]);
+        const [mRow] = await pool.query(
+          'SELECT id_municipio FROM municipio WHERE nombre_municipio = ?',
+          [municipioNombre],
+        );
         if (mRow.length) {
           idMunicipio = mRow[0].id_municipio;
         } else {
-          const [result] = await pool.query('INSERT INTO municipio (nombre_municipio) VALUES (?)', [municipioNombre]);
+          const [result] = await pool.query('INSERT INTO municipio (nombre_municipio) VALUES (?)', [
+            municipioNombre,
+          ]);
           idMunicipio = result.insertId;
         }
 
         // 2. Escuela
         let idEscuela;
-        const [eRow] = await pool.query('SELECT id_escuela FROM escuela WHERE nombre = ? AND id_municipio = ?', [escuelaNombre, idMunicipio]);
+        const [eRow] = await pool.query(
+          'SELECT id_escuela FROM escuela WHERE nombre = ? AND id_municipio = ?',
+          [escuelaNombre, idMunicipio],
+        );
         if (eRow.length) {
           idEscuela = eRow[0].id_escuela;
         } else {
@@ -138,7 +152,7 @@ const importExcel = async (req, res) => {
           await pool.query(
             `INSERT INTO escuela (id_escuela, nombre, id_municipio, num_estudiantes, num_maestros, descripcion)
              VALUES (?, ?, ?, 0, 0, '')`,
-            [newId, escuelaNombre, idMunicipio]
+            [newId, escuelaNombre, idMunicipio],
           );
           idEscuela = newId;
         }
@@ -149,7 +163,7 @@ const importExcel = async (req, res) => {
           `SELECT nc.id_necesidad FROM necesidad_catalogo nc
            JOIN escuela_necesidad en ON nc.id_necesidad = en.id_necesidad
            WHERE nc.nombre_necesidad = ? AND nc.propuesta <=> ? AND en.id_escuela = ?`,
-          [subcategoria, propuesta, idEscuela]
+          [subcategoria, propuesta, idEscuela],
         );
 
         if (nRow.length) {
@@ -162,14 +176,14 @@ const importExcel = async (req, res) => {
                  estado = COALESCE(?, estado),
                  detalles = COALESCE(?, detalles)
              WHERE id_necesidad = ?`,
-            [categoria || 'General', cantidad, unidad, estado, detalles, idNecesidad]
+            [categoria || 'General', cantidad, unidad, estado, detalles, idNecesidad],
           );
         } else {
           const [result] = await pool.query(
             `INSERT INTO necesidad_catalogo 
              (nombre_necesidad, categoria_general, cantidad_requerida, propuesta, unidad, estado, detalles)
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [subcategoria, categoria || 'General', cantidad, propuesta, unidad, estado, detalles]
+            [subcategoria, categoria || 'General', cantidad, propuesta, unidad, estado, detalles],
           );
           idNecesidad = result.insertId;
         }
@@ -177,7 +191,7 @@ const importExcel = async (req, res) => {
         // 4. Relacionar escuela con necesidad
         await pool.query(
           'INSERT IGNORE INTO escuela_necesidad (id_escuela, id_necesidad) VALUES (?, ?)',
-          [idEscuela, idNecesidad]
+          [idEscuela, idNecesidad],
         );
 
         imported++;
@@ -192,7 +206,7 @@ const importExcel = async (req, res) => {
     res.json({
       message: 'Importación finalizada',
       imported,
-      errors: errors.length ? errors : undefined
+      errors: errors.length ? errors : undefined,
     });
   } catch (error) {
     console.error(error);
@@ -226,14 +240,16 @@ const exportNeeds = async (req, res) => {
     xlsx.utils.book_append_sheet(wb, ws, 'Necesidades');
     const buffer = xlsx.write(wb, { type: 'buffer', bookType: 'xlsx' });
     res.setHeader('Content-Disposition', 'attachment; filename="necesidades_exportadas.xlsx"');
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
     res.send(buffer);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al exportar necesidades' });
   }
 };
-
 
 module.exports = {
   getMunicipalities,
@@ -242,5 +258,5 @@ module.exports = {
   getDashboardStats,
   getGlobalProgress,
   importExcel,
-  exportNeeds
+  exportNeeds,
 };

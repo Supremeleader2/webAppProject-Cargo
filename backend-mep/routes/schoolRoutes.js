@@ -5,7 +5,7 @@ const {
   createSchool,
   updateSchool,
   deleteSchool,
-  uploadSchoolImage
+  uploadSchoolImage,
 } = require('../controllers/schoolController');
 const { verifyToken } = require('../middleware/auth');
 const { validateSchool } = require('../middleware/validation');
@@ -15,15 +15,15 @@ const router = express.Router();
 
 const imageStorage = multer.diskStorage({
   destination: 'uploads/images/',
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname)),
 });
 const uploadImage = multer({ storage: imageStorage, limits: { fileSize: 5 * 1024 * 1024 } });
 
-const { 
-  getPropuestas, 
-  addPropuesta, 
-  updatePropuesta, 
-  deletePropuesta 
+const {
+  getPropuestas,
+  addPropuesta,
+  updatePropuesta,
+  deletePropuesta,
 } = require('../controllers/propuestaController');
 
 router.get('/', getSchools);

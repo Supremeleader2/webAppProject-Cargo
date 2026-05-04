@@ -10,7 +10,7 @@ const getSupportRequests = async (req, res) => {
       LEFT JOIN municipio m ON s.id_municipio = m.id_municipio
       ORDER BY s.fecha_recepcion DESC
     `);
-    const formatted = rows.map(row => ({
+    const formatted = rows.map((row) => ({
       id: row.id_solicitud,
       nombreContacto: row.nombre_contacto,
       nombreInstitucion: row.institucion,
@@ -34,15 +34,28 @@ const getSupportRequests = async (req, res) => {
 // POST /api/support-requests (público)
 const createSupportRequest = async (req, res) => {
   const {
-    nombreContacto, nombreInstitucion, municipio, tipoInstitucion,
-    formaParticipacion, telefono, correo, notasAdicionales,
-    escuelaInteres, categoriaInteres, tipoApoyo, materialEspecifico, cantidadMaterial
+    nombreContacto,
+    nombreInstitucion,
+    municipio,
+    tipoInstitucion,
+    formaParticipacion,
+    telefono,
+    correo,
+    notasAdicionales,
+    escuelaInteres,
+    categoriaInteres,
+    tipoApoyo,
+    materialEspecifico,
+    cantidadMaterial,
   } = req.body;
 
   try {
     let id_municipio = null;
     if (municipio) {
-      const [mRow] = await pool.query('SELECT id_municipio FROM municipio WHERE nombre_municipio = ?', [municipio]);
+      const [mRow] = await pool.query(
+        'SELECT id_municipio FROM municipio WHERE nombre_municipio = ?',
+        [municipio],
+      );
       if (mRow.length) id_municipio = mRow[0].id_municipio;
       else console.log(`Municipio no encontrado: ${municipio}`);
     }
@@ -58,23 +71,34 @@ const createSupportRequest = async (req, res) => {
         tipo_institucion, forma_participacion, telefono, correo, notas_adicionales,
         id_escuela_interes, categoria_interes)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id_solicitud, nombreContacto, nombreInstitucion, id_municipio,
-       tipoInstitucion, formaParticipacion, telefono, correo, notasCompletas,
-       escuelaInteres || null, categoriaInteres || null]
+      [
+        id_solicitud,
+        nombreContacto,
+        nombreInstitucion,
+        id_municipio,
+        tipoInstitucion,
+        formaParticipacion,
+        telefono,
+        correo,
+        notasCompletas,
+        escuelaInteres || null,
+        categoriaInteres || null,
+      ],
     );
 
     res.status(201).json({
       message: 'Solicitud registrada exitosamente',
       folio: id_solicitud,
-      seguimiento: 'En las próximas 48 horas, un asesor se pondrá en contacto contigo para coordinar los detalles de tu donación.'
+      seguimiento:
+        'En las próximas 48 horas, un asesor se pondrá en contacto contigo para coordinar los detalles de tu donación.',
     });
   } catch (error) {
     console.error('Error detallado al insertar solicitud:', error);
     // Enviar mensaje de error específico para depuración (solo desarrollo)
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Error al registrar solicitud',
       error: error.message,
-      sqlMessage: error.sqlMessage
+      sqlMessage: error.sqlMessage,
     });
   }
 };

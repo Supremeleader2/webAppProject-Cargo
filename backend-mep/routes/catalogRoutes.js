@@ -1,14 +1,14 @@
 const express = require('express');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-const { 
-  getMunicipalities, 
-  getDonationTypes, 
-  getEducationalLevels, 
-  getDashboardStats, 
+const {
+  getMunicipalities,
+  getDonationTypes,
+  getEducationalLevels,
+  getDashboardStats,
   getGlobalProgress,
   importExcel,
-  exportNeeds   
+  exportNeeds,
 } = require('../controllers/catalogController');
 const { verifyToken } = require('../middleware/auth');
 
